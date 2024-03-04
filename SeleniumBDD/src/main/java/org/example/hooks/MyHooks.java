@@ -10,33 +10,15 @@ import org.testng.annotations.BeforeMethod;
 
 public class MyHooks extends BaseClass {
 
-    /*@Before
+    @Before
     public void setup() {
-        System.out.println("hookd before set up");
-        driver = new ChromeDriver();
-//        driver.get("https://ui.cogmento.com/");
-        driver.get("https://google.com/");
-
-    }*/
-
-    @BeforeMethod
-    public void setup() {
-        System.out.println("hookd before set up");
-        driver = new ChromeDriver();
-//        driver.get("https://ui.cogmento.com/");
-        driver.get("https://google.com/");
-
+        System.out.println("hooks before set up");
     }
 
-   /* @After
-    public void teardown() {
-        System.out.println("hookd tear down");
-        driver.close();
-    }*/
 
-    @AfterMethod
-    public void teardown1() {
-        System.out.println("hookd tear down");
+    @After
+    public void teardown() {
+        System.out.println("hooks tear down");
         driver.close();
     }
 

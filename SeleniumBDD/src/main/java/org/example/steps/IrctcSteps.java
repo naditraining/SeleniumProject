@@ -1,32 +1,27 @@
 package org.example.steps;
 
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.example.pages.BasicDetailsPage;
 import org.example.utility.BaseClass;
-import org.example.utility.ExcelReadSecond;
-import org.example.utility.ExcelReader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
 
 public class IrctcSteps extends BaseClass {
+
+
+    Map<String,String> testData;
 
     @Given("As a user launching the irctc portal")
     public void register() {
@@ -37,7 +32,6 @@ public class IrctcSteps extends BaseClass {
 
     @When("I enter personal details")
     public void personalDetails(){
-
 
         driver.findElement(By.xpath("//input[@id='firstName']")).sendKeys("Sheela");
         driver.findElement(By.xpath("//input[@id='middleName']")).sendKeys("C");
@@ -61,7 +55,7 @@ public class IrctcSteps extends BaseClass {
 
     @When("I read test data for {string}")
     public void readTestDataFor(String testCaseName) throws IOException {
-        readTestData(testCaseName);
+          testData = readTestDataForMyTest(testCaseName);
     }
 
     @When("I enter address details")
@@ -106,7 +100,6 @@ public class IrctcSteps extends BaseClass {
         actions.moveToElement(button);
         actions.perform();
         WebElement checkbox= wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@formcontrolname='termCondition']")));
-        //driver.findElement(By.xpath("//input[@formcontrolname='termCondition']")).click();
         ((JavascriptExecutor)driver).executeScript("arguments[0].click();", checkbox);
 
     }
@@ -125,26 +118,9 @@ public class IrctcSteps extends BaseClass {
     @When("I enter basic details")
     public void basicDetailswewew(){
 
-        BasicDetailsPage basic = new BasicDetailsPage();
-        basic.enterUserName().enterPassword().enterConfirmPassword();
-//        driver.findElement(By.xpath("//input[@id='userName']")).sendKeys("Sheela    ");
-//        driver.findElement(By.xpath("//input[@id='usrPwd']")).sendKeys("Rain@12345");
-//        driver.findElement(By.xpath("//input[@name='cnfUsrPwd']")).sendKeys("Rain@12345");
-//        driver.findElement(By.xpath("//div[@class='ng-tns-c65-7 ui-dropdown ui-widget ui-state-default ui-corner-all']")).click();
-//        driver.findElement(By.xpath("//li[@aria-label='English']")).click();
-//        driver.findElement(By.xpath("//div[@class='ng-tns-c65-8 ui-dropdown ui-widget ui-state-default ui-corner-all']")).click();
-//        driver.findElement(By.xpath("//li[@aria-label='What is your pet name?']")).click();
-//        driver.findElement(By.xpath("//input[@placeholder='Security Answer']")).sendKeys("Suvi");
-//        driver.findElement(By.xpath("//button[@label='Continue']")).click();
-
-    }
-
-
-    @When("I enter basic details for {string}")
-    public void i_enter_basic_details_for(String username, String password, int value) {
-        driver.findElement(By.xpath("//input[@id='userName']")).sendKeys(username);
-        driver.findElement(By.xpath("//input[@id='usrPwd']")).sendKeys("Rain@12345");
-        driver.findElement(By.xpath("//input[@name='cnfUsrPwd']")).sendKeys("Rain@12345");
+        driver.findElement(By.xpath("//input[@id='userName']")).sendKeys(testData.get("username"));
+        driver.findElement(By.xpath("//input[@id='usrPwd']")).sendKeys(testData.get("password"));
+        driver.findElement(By.xpath("//input[@name='cnfUsrPwd']")).sendKeys(testData.get("confirmpassword"));
         driver.findElement(By.xpath("//div[@class='ng-tns-c65-7 ui-dropdown ui-widget ui-state-default ui-corner-all']")).click();
         driver.findElement(By.xpath("//li[@aria-label='English']")).click();
         driver.findElement(By.xpath("//div[@class='ng-tns-c65-8 ui-dropdown ui-widget ui-state-default ui-corner-all']")).click();
@@ -153,5 +129,6 @@ public class IrctcSteps extends BaseClass {
         driver.findElement(By.xpath("//button[@label='Continue']")).click();
 
     }
+
 }
 

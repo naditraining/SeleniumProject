@@ -6,48 +6,67 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExcelReader {
-    public static List<Object[]> readTestData(String filePath, String sheetName) throws IOException {
-        List<Object[]> testData = new ArrayList<>();
+
+    public static List<Map<String, String>> readTestData(String filePath, String sheetName) throws IOException {
+        List<Map<String, String>> testDataList = new ArrayList<>();
 
         FileInputStream fis = new FileInputStream(filePath);
         Workbook workbook = new XSSFWorkbook(fis);
         Sheet sheet = workbook.getSheet(sheetName);
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        Row headerRow = sheet.getRow(0);
+        int totalRows = sheet.getPhysicalNumberOfRows();
 
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            Iterator<Cell> cellIterator = row.cellIterator();
+        for (int rowIndex = 1; rowIndex < totalRows; rowIndex++) {
+            Row currentRow = sheet.getRow(rowIndex);
 
-            List<Object> rowData = new ArrayList<>();
+            Map<String, String> rowData = new HashMap<>();
 
-            while (cellIterator.hasNext()) {
-                Cell cell = cellIterator.next();
-                switch (cell.getCellType()) {
-                    case STRING:
-                        rowData.add(cell.getStringCellValue());
-                        break;
-                    case NUMERIC:
-                        rowData.add(cell.getNumericCellValue());
-                        break;
-                    // Add more cases for different cell types as needed
+            for (int cellIndex = 0; cellIndex < headerRow.getLastCellNum(); cellIndex++) {
+                Cell currentCell = currentRow.getCell(cellIndex);
 
-                    default:
-                        // Handle other cell types if necessary
-                }
+                String columnHeader = headerRow.getCell(cellIndex).getStringCellValue();
+                String cellValue = getCellValueAsString(currentCell);
+
+                rowData.put(columnHeader, cellValue);
             }
 
-            testData.add(rowData.toArray());
+            testDataList.add(rowData);
         }
 
         fis.close();
         workbook.close();
 
-        return testData;
+        return testDataList;
     }
-}
 
+    private static String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case BLANK:
+                return "";
+            default:
+                return null;
+        }
+    }
+
+
+}
